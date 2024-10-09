@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+
+<h1>Bienvenue sur votre gestionnaire de cave à vin</h1>
+{% if user.is_authenticated %}
+    <p>Bonjour, {{ user.username }} !</p>
+    <a href="{% url 'liste_caves' %}">Voir mes caves</a><br>
+    <a href="{% url 'logout' %}">Se déconnecter</a>
+{% else %}
+    <a href="{% url 'login' %}">Se connecter</a><br>
+    <a href="{% url 'signup' %}">S'inscrire</a>
+{% endif %}
+
+
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<h1>Mes caves</h1>
+<ul>
+    {% for cave in caves %}
+        <li><a href="{% url 'liste_bouteilles' cave.id %}">{{ cave.name }}</a></li>
+    {% endfor %}
+</ul>
+<a href="{% url 'creer_cave' %}">Créer une nouvelle cave</a>
+
+
+</html>
