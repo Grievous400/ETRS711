@@ -1,0 +1,12 @@
+<!-- templates/cave/ajouter_bouteille.html -->
+<h1>Ajouter une bouteille</h1>
+<form method="POST">
+    {% csrf_token %}
+    Domaine viticole: <input type="text" name="domaine"><br>
+    Nom: <input type="text" name="nom"><br>
+    Type: <input type="text" name="type"><br>
+    Année: <input type="text" name="annee"><br>
+    Région: <input type="text" name="region"><br>
+    Prix: <input type="text" name="prix"><br>
+    <input type="submit" value="Ajouter">
+</form>

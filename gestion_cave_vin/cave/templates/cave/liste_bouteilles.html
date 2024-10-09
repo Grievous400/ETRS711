@@ -1,0 +1,13 @@
+<!-- templates/cave/liste_bouteilles.html -->
+<h1>Liste des bouteilles de {{ cave.name }}</h1>
+<a href="?tri=nom">Trier par Nom</a> | <a href="?tri=annee">Trier par Année</a> | <a href="?tri=prix">Trier par Prix</a>
+
+<ul>
+    {% for bouteille in bouteilles %}
+        <li>{{ bouteille.nom }} - {{ bouteille.annee }} - {{ bouteille.type }} - {{ bouteille.prix }}€
+            <a href="{% url 'noter_bouteille' bouteille.id %}">Noter</a>
+            <a href="{% url 'archiver_bouteille' bouteille.id %}">Archiver</a>
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'ajouter_bouteille' cave.id %}">Ajouter une bouteille</a>
