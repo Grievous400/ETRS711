@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la Cave</title>
+</head>
+<body>
+    <h1>Détails de la cave: {{ cave.nom }}</h1>
+    <p>Nombre d'étagères: {{ cave.nombre_etageres }}</p>
+    <a href="{{ url_for('ajouter_etagere', cave_id=cave.id) }}">Ajouter une étagère</a><br>
+
+    <h2>Étagères</h2>
+    <ul>
+        {% for etagere in etageres %}
+        <li>Étagère {{ etagere.numero }} - {{ etagere.nombreBouteilles }} bouteilles
+            <a href="{{ url_for('voir_etagere', etagere_id=etagere.id) }}">Voir</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+</body>
+</html>

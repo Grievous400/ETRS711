@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la Bouteille</title>
+</head>
+<body>
+    <h1>Bouteille: {{ bouteille.nom }}</h1>
+    <p>Domaine: {{ bouteille.domaineViticole }}</p>
+    <p>Type: {{ bouteille.type }}</p>
+    <p>Année: {{ bouteille.annee }}</p>
+    <p>Région: {{ bouteille.region }}</p>
+    <p>Prix: {{ bouteille.prix }} €</p>
+
+    <h2>Commentaires</h2>
+    <ul>
+        {% for commentaire in commentaires %}
+        <li>{{ commentaire.pseudo }}: {{ commentaire.contenu }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="POST" action="{{ url_for('ajouter_commentaire', bouteille_id=bouteille.id) }}">
+        <label for="pseudo">Pseudo:</label>
+        <input type="text" id="pseudo" name="pseudo" required><br>
+        <label for="contenu">Commentaire:</label>
+        <textarea id="contenu" name="contenu" required></textarea><br>
+        <button type="submit">Ajouter un commentaire</button>
+    </form>
+
+    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+</body>
+</html>

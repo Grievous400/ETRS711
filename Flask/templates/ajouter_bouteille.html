@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter une Bouteille</title>
+</head>
+<body>
+    <h1>Ajouter une nouvelle bouteille</h1>
+    <form method="POST">
+        <label for="domaineViticole">Domaine Viticole:</label>
+        <input type="text" id="domaineViticole" name="domaineViticole" required><br>
+
+        <label for="nom">Nom:</label>
+        <input type="text" id="nom" name="nom" required><br>
+
+        <label for="type">Type de vin:</label>
+        <input type="text" id="type" name="type" required><br>
+
+        <label for="annee">Année:</label>
+        <input type="number" id="annee" name="annee" required><br>
+
+        <label for="region">Région:</label>
+        <input type="text" id="region" name="region" required><br>
+
+        <label for="prix">Prix:</label>
+        <input type="number" id="prix" name="prix" step="0.01" required><br>
+
+        <button type="submit">Ajouter</button>
+    </form>
+    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Caves</title>
+</head>
+<body>
+    <h1>Liste des Caves</h1>
+    <ul>
+        {% for cave in caves %}
+        <li>
+            Cave : {{ cave.nom }} <br>
+            Nombre d'étagères : {{ cave.nombreEtagere }} <br>
+            <a href="{{ url_for('creer_etagere') }}">Ajouter une étagère</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+</body>
+</html>

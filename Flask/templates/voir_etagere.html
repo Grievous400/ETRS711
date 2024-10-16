@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de l'Étagère</title>
+</head>
+<body>
+    <h1>Étagère n°{{ etagere.numero }}</h1>
+    <p>Nombre de bouteilles: {{ etagere.nombreBouteilles }}</p>
+    <a href="{{ url_for('ajouter_bouteille', etagere_id=etagere.id) }}">Ajouter une bouteille</a><br>
+
+    <h2>Bouteilles</h2>
+    <ul>
+        {% for bouteille in bouteilles %}
+        <li>{{ bouteille.nom }} - {{ bouteille.annee }} - {{ bouteille.type }}
+            <a href="{{ url_for('voir_bouteille', bouteille_id=bouteille.id) }}">Voir détails</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+</body>
+</html>

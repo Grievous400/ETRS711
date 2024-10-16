@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Cave à Vin</title>
+</head>
+<body>
+    <h1>Bienvenue dans votre gestionnaire de cave à vin</h1>
+    <ul>
+        <li><a href="{{ url_for('creer_cave') }}">Créer une nouvelle cave</a></li>
+        <li><a href="{{ url_for('ajouter_bouteille') }}">Ajouter une nouvelle bouteille</a></li>
+        <li><a href="{{ url_for('lister_caves') }}">Voir vos caves</a></li>
+        <li><a href="{{ url_for('lister_bouteilles') }}">Lister les bouteilles</a></li>
+    </ul>
+</body>
+</html>
