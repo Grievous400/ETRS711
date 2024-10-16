@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un compte</title>
+</head>
+<body>
+    <h1>Créer un compte</h1>
+    <form method="POST">
+        {{ register_form.hidden_tag() }}
+        <label for="nom">Nom:</label>
+        {{ register_form.nom(size=20) }}<br>
+
+        <label for="prenom">Prénom:</label>
+        {{ register_form.prenom(size=20) }}<br>
+
+        <label for="pseudo">Pseudo:</label>
+        {{ register_form.pseudo(size=20) }}<br>
+
+        <label for="mot_de_passe">Mot de passe:</label>
+        {{ register_form.mot_de_passe(size=20) }}<br>
+
+        {{ register_form.submit() }}
+    </form>
+    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+</body>
+</html>

@@ -29,3 +29,10 @@ class AddCommentaireForm(FlaskForm):
     contenu = TextAreaField('Commentaire', validators=[DataRequired()])
     bouteille_id = HiddenField('Bouteille ID', validators=[DataRequired()])
     submit = SubmitField('Ajouter Commentaire')
+
+class RegisterForm(FlaskForm):
+    nom = StringField('Nom', validators=[DataRequired()])
+    prenom = StringField('Prénom', validators=[DataRequired()])
+    pseudo = StringField('Pseudo', validators=[DataRequired()])
+    mot_de_passe = PasswordField('Mot de passe', validators=[DataRequired()])
+    submit = SubmitField('Créer un compte')
