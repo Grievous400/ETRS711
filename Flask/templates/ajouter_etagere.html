@@ -2,14 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une Étagère</title>
+    <title>Ajouter une étagère</title>
 </head>
 <body>
-    <h1>Ajouter une nouvelle étagère</h1>
+    <h1>Ajouter une étagère à la cave</h1>
+
     <form method="POST">
-        <button type="submit">Ajouter</button>
+        {{ etagere_form.hidden_tag() }}  <!-- Protection CSRF -->
+
+        <div>
+            <label for="numero_etagere">Numéro de l'étagère:</label>
+            {{ etagere_form.numero_etagere }}  <!-- Champ pour le numéro de l'étagère -->
+        </div>
+
+        <div>
+            <label for="nombre_emplacements">Nombre d'emplacements disponibles:</label>
+            {{ etagere_form.nombre_emplacements }}  <!-- Champ pour le nombre d'emplacements disponibles -->
+        </div>
+
+        <div>
+            {{ etagere_form.submit() }}  <!-- Bouton de soumission -->
+        </div>
     </form>
-    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+
+    <a href="{{ url_for('lister_etageres', cave_id=cave_id) }}">
+    <button>Retour à la liste des étagères</button>
+    </a>
+
 </body>
 </html>

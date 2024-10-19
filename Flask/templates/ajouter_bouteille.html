@@ -2,32 +2,51 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une Bouteille</title>
+    <title>Ajouter une bouteille</title>
 </head>
 <body>
-    <h1>Ajouter une nouvelle bouteille</h1>
+    <h1>Ajouter une bouteille dans l'étagère</h1>
+
     <form method="POST">
-        <label for="domaineViticole">Domaine Viticole:</label>
-        <input type="text" id="domaineViticole" name="domaineViticole" required><br>
+        {{ bouteille_form.hidden_tag() }}  <!-- Protection CSRF -->
 
-        <label for="nom">Nom:</label>
-        <input type="text" id="nom" name="nom" required><br>
+        <div>
+            <label for="domaineViticole">Domaine Viticole :</label>
+            {{ bouteille_form.domaineViticole }}
+        </div>
 
-        <label for="type">Type de vin:</label>
-        <input type="text" id="type" name="type" required><br>
+        <div>
+            <label for="nom">Nom :</label>
+            {{ bouteille_form.nom }}
+        </div>
 
-        <label for="annee">Année:</label>
-        <input type="number" id="annee" name="annee" required><br>
+        <div>
+            <label for="type">Type :</label>
+            {{ bouteille_form.type }}
+        </div>
 
-        <label for="region">Région:</label>
-        <input type="text" id="region" name="region" required><br>
+        <div>
+            <label for="annee">Année :</label>
+            {{ bouteille_form.annee }}
+        </div>
 
-        <label for="prix">Prix:</label>
-        <input type="number" id="prix" name="prix" step="0.01" required><br>
+        <div>
+            <label for="region">Région :</label>
+            {{ bouteille_form.region }}
+        </div>
 
-        <button type="submit">Ajouter</button>
+        <div>
+            <label for="prix">Prix :</label>
+            {{ bouteille_form.prix }}
+        </div>
+
+        <div>
+            {{ bouteille_form.submit() }}
+        </div>
     </form>
-    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+
+    <a href="{{ url_for('lister_bouteilles', etagere_id=etagere_id) }}">
+        <button>Retour à la liste des bouteilles</button>
+    </a>
 </body>
 </html>

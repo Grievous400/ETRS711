@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, FloatField, SubmitField, PasswordField, TextAreaField, HiddenField
-from wtforms.validators import DataRequired
+from wtforms.validators import *
 
 class LoginForm(FlaskForm):
     pseudo = StringField('Pseudo', validators=[DataRequired()])
@@ -9,6 +9,7 @@ class LoginForm(FlaskForm):
 
 class AddCaveForm(FlaskForm):
     nom = StringField('Nom de la cave', validators=[DataRequired()])
+    nombre_etageres = IntegerField('Nombre d\'étagères', validators=[DataRequired(), NumberRange(min=1, message="Le nombre d'étagères doit être au moins de 1")])
     submit = SubmitField('Créer')
 
 class AddBouteilleForm(FlaskForm):
@@ -21,8 +22,9 @@ class AddBouteilleForm(FlaskForm):
     submit = SubmitField('Ajouter Bouteille')
 
 class AddEtagereForm(FlaskForm):
-    numero_etagere = IntegerField('Numéro d\'étagère', validators=[DataRequired()])
-    submit = SubmitField('Créer Étagère')
+    numero_etagere = IntegerField('Numéro de l\'étagère', validators=[DataRequired(), NumberRange(min=1, message="Le numéro de l'étagère doit être au moins 1")])
+    nombre_emplacements = IntegerField('Nombre d\'emplacements disponibles', validators=[DataRequired(), NumberRange(min=1, message="Doit être supérieur à 0")])
+    submit = SubmitField('Ajouter')
 
 class AddCommentaireForm(FlaskForm):
     pseudo = StringField('Pseudo', validators=[DataRequired()])

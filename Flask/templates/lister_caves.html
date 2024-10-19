@@ -2,20 +2,26 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Caves</title>
+    <title>Liste de vos caves</title>
 </head>
 <body>
-    <h1>Vos Caves</h1>
-    <ul>
+    <h1>Vos caves</h1>
+
+    {% if caves %}
+        <ul>
         {% for cave in caves %}
-        <li>
-            Cave : {{ cave.nom }} <br>
-            Nombre d'étagères : {{ cave.nombreEtagere }} <br>
-            <a href="{{ url_for('creer_etagere') }}">Ajouter une étagère</a>
-        </li>
+            <li>
+                <a href="{{ url_for('lister_etageres', cave_id=cave['id']) }}">{{ cave['nom'] }}</a>  <!-- Lien vers les étagères -->
+                - Nombre d'étagères : {{ cave['nombreEtagere'] }}
+            </li>
         {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+        </ul>
+    {% else %}
+        <p>Vous n'avez aucune cave.</p>
+    {% endif %}
+
+    <a href="{{ url_for('creer_cave') }}">
+        <button>Créer une nouvelle cave</button>
+    </a>
 </body>
 </html>

@@ -2,19 +2,34 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Étagères</title>
+    <title>Liste des étagères de la cave</title>
 </head>
 <body>
-    <h1>Vos Étagères</h1>
-    <ul>
+    <h1>Étagères de la cave</h1>
+
+    {% if etageres %}
+        <ul>
         {% for etagere in etageres %}
-        <li>
-            Numéro d'étagère : {{ etagere.numeroEtagere }} <br>
-            Cave ID : {{ etagere.cave_id }}
-        </li>
+            <li>
+                <a href="{{ url_for('lister_bouteilles', etagere_id=etagere['id']) }}">
+                    Étagère n°{{ etagere['numeroEtagere'] }} - Emplacements disponibles : {{ etagere['nombreEmplacementsDisponibles'] }}
+                </a>
+                <form method="POST" action="{{ url_for('supprimer_etagere', etagere_id=etagere['id']) }}" style="display:inline;">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </li>
         {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+        </ul>
+    {% else %}
+        <p>Aucune étagère dans cette cave.</p>
+    {% endif %}
+
+    <a href="{{ url_for('ajouter_etagere', cave_id=cave_id) }}">
+        <button>Ajouter une étagère</button>
+    </a>
+
+    <a href="{{ url_for('lister_caves') }}">
+        <button>Retour à la liste des caves</button>
+    </a>
 </body>
 </html>

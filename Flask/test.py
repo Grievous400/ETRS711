@@ -1,6 +1,6 @@
 import mysql.connector
 
-# Remplacez par vos informations de connexion
+# Connexion à la base de données
 conn = mysql.connector.connect(
     host="localhost",
     user="toto",
@@ -8,20 +8,34 @@ conn = mysql.connector.connect(
     database="cavevin"
 )
 
-pseudo = 'test'
-mot_de_passe = 'test'  # Mettez ici le mot de passe que vous essayez
+# Données à insérer
+data = "cave_test8"
+nombre_etageres = 6
+current_user_id = 2
 
-cur = conn.cursor(dictionary=True)
-cur.execute("SELECT * FROM Utilisateur WHERE pseudo = %s", (pseudo,))
-user = cur.fetchone()
+try:
+    cur = conn.cursor(dictionary=True)
 
-if user:
-    if user['motDePasse'] == mot_de_passe:
-        print(f"Connexion réussie pour {user['pseudo']}")
+    # Exécution de la requête d'insertion
+    cur.execute("INSERT INTO Cave (nom, nombreEtagere, utilisateur_id) VALUES (%s, %s, %s)",
+                (data, nombre_etageres, current_user_id))
+
+    # Validation des modifications
+    conn.commit()
+    print(f"Cave '{data}' créée avec succès pour l'utilisateur {current_user_id}.")
+
+    # Vérification de l'insertion avec un SELECT
+    cur.execute("SELECT * FROM Cave WHERE nom = %s AND utilisateur_id = %s", (data, current_user_id))
+    inserted_cave = cur.fetchone()
+
+    if inserted_cave:
+        print(f"Cave trouvée : {inserted_cave}")
     else:
-        print("Mot de passe incorrect.")
-else:
-    print("Utilisateur non trouvé.")
+        print("Erreur : la cave n'a pas été trouvée après l'insertion.")
 
-cur.close()
-conn.close()
+except mysql.connector.Error as err:
+    print(f"Erreur : {err}")
+
+finally:
+    cur.close()
+    conn.close()

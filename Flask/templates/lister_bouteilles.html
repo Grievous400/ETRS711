@@ -2,23 +2,38 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Bouteilles</title>
+    <title>Bouteilles dans l'étagère</title>
 </head>
 <body>
-    <h1>Vos Bouteilles</h1>
-    <ul>
+    <h1>Bouteilles dans l'étagère</h1>
+
+    {% if bouteilles %}
+        <ul>
         {% for bouteille in bouteilles %}
-        <li>
-            Nom : {{ bouteille.nom }} <br>
-            Domaine Viticole : {{ bouteille.domaineViticole }} <br>
-            Type : {{ bouteille.type }} <br>
-            Année : {{ bouteille.annee }} <br>
-            Région : {{ bouteille.region }} <br>
-            Prix : {{ bouteille.prix }} € <br>
-        </li>
+            <li>
+                Domaine : {{ bouteille['domaineViticole'] }},
+                Nom : {{ bouteille['nom'] }},
+                Type : {{ bouteille['type'] }},
+                Année : {{ bouteille['annee'] }},
+                Région : {{ bouteille['region'] }},
+                Prix : {{ bouteille['prix'] }}€
+                <form method="POST" action="{{ url_for('supprimer_bouteille', bouteille_id=bouteille['id']) }}" style="display:inline;">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </li>
         {% endfor %}
-    </ul>
-    <a href="{{ url_for('index') }}">Retour à l'accueil</a>
+        </ul>
+    {% else %}
+        <p>Aucune bouteille dans cette étagère.</p>
+    {% endif %}
+
+    <a href="{{ url_for('ajouter_bouteille', etagere_id=etagere_id) }}">
+        <button>Ajouter une bouteille</button>
+    </a>
+
+    <a href="{{ url_for('lister_etageres', cave_id=cave_id) }}">
+    <button>Retour aux étagères</button>
+    </a>
+
 </body>
 </html>
