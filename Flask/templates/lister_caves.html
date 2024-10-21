@@ -2,26 +2,32 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Liste de vos caves</title>
+    <title>Liste des caves</title>
 </head>
 <body>
-    <h1>Vos caves</h1>
+    <h1>Liste des caves</h1>
 
     {% if caves %}
         <ul>
         {% for cave in caves %}
             <li>
-                <a href="{{ url_for('lister_etageres', cave_id=cave['id']) }}">{{ cave['nom'] }}</a>  <!-- Lien vers les étagères -->
-                - Nombre d'étagères : {{ cave['nombreEtagere'] }}
+                <strong>{{ cave['nom'] }}</strong>
+                <a href="{{ url_for('lister_etageres', cave_id=cave['id']) }}">Voir les étagères</a>
+
+                <!-- Formulaire pour supprimer la cave -->
+                <form method="POST" action="{{ url_for('supprimer_cave', cave_id=cave['id']) }}" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette cave ?');">
+                    <button type="submit">Supprimer</button>
+                </form>
             </li>
         {% endfor %}
         </ul>
     {% else %}
-        <p>Vous n'avez aucune cave.</p>
+        <p>Aucune cave disponible.</p>
     {% endif %}
 
     <a href="{{ url_for('creer_cave') }}">
         <button>Créer une nouvelle cave</button>
     </a>
+
 </body>
 </html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de la bouteille</title>
+</head>
+<body>
+    <h1>{{ bouteille['nom'] }}</h1>
+    <p><strong>Domaine :</strong> {{ bouteille['domaineViticole'] }}</p>
+    <p><strong>Type :</strong> {{ bouteille['type'] }}</p>
+    <p><strong>Année :</strong> {{ bouteille['annee'] }}</p>
+    <p><strong>Région :</strong> {{ bouteille['region'] }}</p>
+    <p><strong>Prix :</strong> {{ bouteille['prix'] }}€</p>
+
+    <!-- Affichage de la photo de la bouteille si elle est disponible -->
+    {% if bouteille['photoEtiquette'] %}
+        <h2>Image de la bouteille :</h2>
+        <img src="{{ url_for('static', filename=bouteille['photoEtiquette']) }}" alt="Image de la bouteille" style="max-width:300px;">
+    {% else %}
+        <p>Aucune image disponible pour cette bouteille.</p>
+    {% endif %}
+
+    <h2>Commentaires et notes</h2>
+
+    <!-- Affichage de la moyenne des notes -->
+    <p><strong>Moyenne des notes :</strong>
+        {% if moyenne_note %}
+            {{ moyenne_note|round(2) }}/5
+        {% else %}
+            Pas encore de notes
+        {% endif %}
+    </p>
+
+    {% if commentaires %}
+        <ul>
+        {% for commentaire in commentaires %}
+            <li>
+                <strong>{{ commentaire['pseudo'] }} :</strong> {{ commentaire['contenu'] }}<br>
+                Note : {{ commentaire['note'] }}/5
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun commentaire pour cette bouteille.</p>
+    {% endif %}
+
+    <h3>Ajouter un commentaire et une note</h3>
+    <form method="POST">
+        {{ commentaire_form.hidden_tag() }}
+
+        <div>
+            <label for="contenu">Commentaire :</label>
+            {{ commentaire_form.contenu }}
+        </div>
+
+        <div>
+            <label for="note">Note :</label>
+            {{ commentaire_form.note }}
+        </div>
+
+        <div>
+            {{ commentaire_form.submit() }}
+        </div>
+    </form>
+
+    <a href="{{ url_for('lister_bouteilles', etagere_id=bouteille['etagere_id']) }}">
+        <button>Retour à la liste des bouteilles</button>
+    </a>
+</body>
+</html>

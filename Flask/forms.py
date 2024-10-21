@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FloatField, SubmitField, PasswordField, TextAreaField, HiddenField
+from wtforms import *
 from wtforms.validators import *
+from flask_wtf.file import FileAllowed, FileRequired
 
 class LoginForm(FlaskForm):
     pseudo = StringField('Pseudo', validators=[DataRequired()])
@@ -14,12 +15,13 @@ class AddCaveForm(FlaskForm):
 
 class AddBouteilleForm(FlaskForm):
     domaineViticole = StringField('Domaine Viticole', validators=[DataRequired()])
-    nom = StringField('Nom', validators=[DataRequired()])
-    type = StringField('Type de vin', validators=[DataRequired()])
+    nom = StringField('Nom de la bouteille', validators=[DataRequired()])
+    type = StringField('Type de vin')
     annee = IntegerField('Année', validators=[DataRequired()])
-    region = StringField('Région', validators=[DataRequired()])
-    prix = FloatField('Prix', validators=[DataRequired()])
-    submit = SubmitField('Ajouter Bouteille')
+    region = StringField('Région')
+    prix = IntegerField('Prix', validators=[DataRequired()])
+    photoEtiquette = FileField('Photo de l\'étiquette', validators=[FileAllowed(['jpg', 'png'], 'Images seulement!')])
+    submit = SubmitField('Ajouter la bouteille')
 
 class AddEtagereForm(FlaskForm):
     numero_etagere = IntegerField('Numéro de l\'étagère', validators=[DataRequired(), NumberRange(min=1, message="Le numéro de l'étagère doit être au moins 1")])
@@ -27,10 +29,9 @@ class AddEtagereForm(FlaskForm):
     submit = SubmitField('Ajouter')
 
 class AddCommentaireForm(FlaskForm):
-    pseudo = StringField('Pseudo', validators=[DataRequired()])
-    contenu = TextAreaField('Commentaire', validators=[DataRequired()])
-    bouteille_id = HiddenField('Bouteille ID', validators=[DataRequired()])
-    submit = SubmitField('Ajouter Commentaire')
+    contenu = TextAreaField('Votre commentaire', validators=[DataRequired()])
+    note = IntegerField('Votre note (1-5)', validators=[DataRequired(), NumberRange(min=1, max=5, message="La note doit être entre 1 et 5")])
+    submit = SubmitField('Ajouter un commentaire')
 
 class RegisterForm(FlaskForm):
     nom = StringField('Nom', validators=[DataRequired()])

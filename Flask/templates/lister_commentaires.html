@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Commentaires</title>
+</head>
+<body>
+    <h1>Commentaires pour la bouteille</h1>
+
+    {% if commentaires %}
+        <ul>
+        {% for commentaire in commentaires %}
+            <li><strong>{{ commentaire['pseudo'] }}</strong> : {{ commentaire['contenu'] }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucun commentaire pour cette bouteille.</p>
+    {% endif %}
+
+    <a href="{{ url_for('lister_bouteilles', etagere_id=etagere_id) }}">
+        <button>Retour aux bouteilles</button>
+    </a>
+</body>
+</html>

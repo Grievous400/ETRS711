@@ -11,12 +11,11 @@
         <ul>
         {% for bouteille in bouteilles %}
             <li>
-                Domaine : {{ bouteille['domaineViticole'] }},
-                Nom : {{ bouteille['nom'] }},
-                Type : {{ bouteille['type'] }},
-                Année : {{ bouteille['annee'] }},
-                Région : {{ bouteille['region'] }},
-                Prix : {{ bouteille['prix'] }}€
+                <a href="{{ url_for('afficher_bouteille', bouteille_id=bouteille['id']) }}">
+                    Domaine : {{ bouteille['domaineViticole'] }}, Nom : {{ bouteille['nom'] }},
+                    Type : {{ bouteille['type'] }}, Année : {{ bouteille['annee'] }},
+                    Région : {{ bouteille['region'] }}, Prix : {{ bouteille['prix'] }}€
+                </a>
                 <form method="POST" action="{{ url_for('supprimer_bouteille', bouteille_id=bouteille['id']) }}" style="display:inline;">
                     <button type="submit">Supprimer</button>
                 </form>
@@ -32,7 +31,7 @@
     </a>
 
     <a href="{{ url_for('lister_etageres', cave_id=cave_id) }}">
-    <button>Retour aux étagères</button>
+        <button>Retour aux étagères</button>
     </a>
 
 </body>

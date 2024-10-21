@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter un commentaire</title>
+</head>
+<body>
+    <h1>Ajouter un commentaire</h1>
+
+    <form method="POST">
+        {{ commentaire_form.hidden_tag() }}  <!-- Protection CSRF -->
+
+        <div>
+            <label for="contenu">Commentaire :</label>
+            {{ commentaire_form.contenu }}
+        </div>
+
+        <div>
+            {{ commentaire_form.submit() }}
+        </div>
+    </form>
+
+    <a href="{{ url_for('lister_bouteilles', etagere_id=etagere_id) }}">
+        <button>Retour à la liste des bouteilles</button>
+    </a>
+</body>
+</html>

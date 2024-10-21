@@ -3,6 +3,8 @@ from flask_mysqldb import MySQL
 from models import *
 from forms import *
 import os
+from werkzeug.utils import secure_filename
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'test_clé'
@@ -10,6 +12,8 @@ app.config['MYSQL_USER'] = 'toto'
 app.config['MYSQL_PASSWORD'] = 'toto'
 app.config['MYSQL_DB'] = 'cavevin'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+UPLOAD_FOLDER = 'static/uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 mysql = MySQL(app)
 
@@ -49,30 +53,32 @@ def creer_cave():
     cave_form = AddCaveForm()
 
     if cave_form.validate_on_submit():
-        print("Le formulaire est bien validé")
 
         if current_user:  # Vérifie que l'utilisateur est bien connecté
-            print(f"ID utilisateur : {current_user['id']}")  # Debug: Vérifie l'ID utilisateur
-            print(f"Nom de la cave : {cave_form.nom.data}, Nombre d'étagères : {cave_form.nombre_etageres.data}")  # Debug: Vérifie les valeurs du formulaire
-
-            try:
-                # Exécution de la requête SQL
-                cur = mysql.connection.cursor()
-                cur.execute("INSERT INTO Cave (nom, nombreEtagere, utilisateur_id) VALUES (%s, %s, %s)",
+            # Exécution de la requête SQL
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO Cave (nom, nombreEtagere, utilisateur_id) VALUES (%s, %s, %s)",
                             (cave_form.nom.data, cave_form.nombre_etageres.data, current_user['id']))
-                mysql.connection.commit()
-                cur.close()
-                print("Insertion dans la base réussie")
-                flash('Cave créée avec succès !', 'success')
-            except Exception as e:
-                print(f"Erreur lors de l'insertion : {e}")  # Capture l'erreur en cas d'échec
-                flash(f"Erreur lors de la création de la cave : {e}", 'danger')
+            mysql.connection.commit()
+            cur.close()
 
         return redirect(url_for('lister_caves'))
-    else:
-        print("Le formulaire n'a pas été validé")
 
         return render_template('creer_cave.html', cave_form=cave_form)
+
+
+@app.route('/cave/<int:cave_id>/supprimer', methods=['POST'])
+def supprimer_cave(cave_id):
+    cur = mysql.connection.cursor()
+
+    cur.execute("DELETE FROM Etagere WHERE cave_id = %s", [cave_id])
+
+    cur.execute("DELETE FROM Cave WHERE id = %s", [cave_id])
+    mysql.connection.commit()
+    cur.close()
+
+
+return redirect(url_for('lister_caves'))
 
 @app.route('/cave/<int:cave_id>/ajouter_etagere', methods=['GET', 'POST'])
 def ajouter_etagere(cave_id):
@@ -89,7 +95,6 @@ def ajouter_etagere(cave_id):
         mysql.connection.commit()
         cur.close()
 
-        flash('Étagère ajoutée avec succès !', 'success')
         return redirect(url_for('lister_etageres', cave_id=cave_id))
 
     # Transmettre 'cave_id' au template
@@ -102,7 +107,6 @@ def supprimer_etagere(etagere_id):
     mysql.connection.commit()
     cur.close()
 
-    flash('Étagère supprimée avec succès !', 'success')
     return redirect(request.referrer)
 
 @app.route('/etagere/<int:etagere_id>/ajouter_bouteille', methods=['GET', 'POST'])
@@ -110,16 +114,25 @@ def ajouter_bouteille(etagere_id):
     bouteille_form = AddBouteilleForm()
 
     if bouteille_form.validate_on_submit():
+        # Gérer l'upload de l'image
+        image_path = None
+        if bouteille_form.photoEtiquette.data:
+            image_file = bouteille_form.photoEtiquette.data
+            filename = secure_filename(image_file.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image_file.save(image_path)
+
         cur = mysql.connection.cursor()
+
+        # Ajouter la bouteille à la table avec le chemin de l'image stocké dans photoEtiquette
         cur.execute("""
-            INSERT INTO Bouteille (domaineViticole, nom, type, annee, region, prix, etagere_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (bouteille_form.domaineViticole.data, bouteille_form.nom.data, bouteille_form.type.data, bouteille_form.annee.data,
-              bouteille_form.region.data, bouteille_form.prix.data, etagere_id))
+            INSERT INTO Bouteille (domaineViticole, nom, type, annee, region, prix, etagere_id, photoEtiquette)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (bouteille_form.domaineViticole.data, bouteille_form.nom.data, bouteille_form.type.data,
+              bouteille_form.annee.data, bouteille_form.region.data, bouteille_form.prix.data, etagere_id, image_path))
         mysql.connection.commit()
         cur.close()
 
-        flash('Bouteille ajoutée avec succès !', 'success')
         return redirect(url_for('lister_bouteilles', etagere_id=etagere_id))
 
     return render_template('ajouter_bouteille.html', bouteille_form=bouteille_form, etagere_id=etagere_id)
@@ -131,7 +144,6 @@ def supprimer_bouteille(bouteille_id):
     mysql.connection.commit()
     cur.close()
 
-    flash('Bouteille supprimée avec succès !', 'success')
     return redirect(request.referrer)
 
 @app.route('/lister_caves')
@@ -187,6 +199,37 @@ def lister_bouteilles(etagere_id):
     else:
         flash('Vous devez être connecté pour voir les bouteilles', 'danger')
         return redirect(url_for('index'))
+@app.route('/bouteille/<int:bouteille_id>/ajouter_commentaire', methods=['GET', 'POST'])
+def ajouter_commentaire(bouteille_id):
+    global current_user  # Utiliser la variable globale
+
+    if not current_user:
+        flash('Vous devez être connecté pour ajouter un commentaire.', 'danger')
+        return redirect(url_for('index'))
+
+    commentaire_form = AddCommentaireForm()
+
+    if commentaire_form.validate_on_submit():
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            INSERT INTO Commentaire (contenu, pseudo, bouteille_id)
+            VALUES (%s, %s, %s)
+        """, (commentaire_form.contenu.data, current_user['pseudo'], bouteille_id))
+        mysql.connection.commit()
+        cur.close()
+
+        flash('Commentaire ajouté avec succès !', 'success')
+        return redirect(url_for('lister_bouteilles', etagere_id=commentaire_form.etagere_id.data))
+
+    return render_template('ajouter_commentaire.html', commentaire_form=commentaire_form, bouteille_id=bouteille_id)
+@app.route('/bouteille/<int:bouteille_id>/commentaires')
+def lister_commentaires(bouteille_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM Commentaire WHERE bouteille_id = %s", [bouteille_id])
+    commentaires = cur.fetchall()
+    cur.close()
+
+    return render_template('lister_commentaires.html', commentaires=commentaires, bouteille_id=bouteille_id)
 
 @app.route('/logout')
 def logout():
@@ -224,6 +267,42 @@ def register():
             return redirect(url_for('index'))
 
     return render_template('register.html', register_form=register_form)
+
+@app.route('/bouteille/<int:bouteille_id>', methods=['GET', 'POST'])
+def afficher_bouteille(bouteille_id):
+    global current_user  # Utiliser la variable globale
+
+    # Récupérer les informations de la bouteille
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM Bouteille WHERE id = %s", [bouteille_id])
+    bouteille = cur.fetchone()
+
+    # Récupérer les commentaires et notes pour cette bouteille
+    cur.execute("SELECT * FROM Commentaire WHERE bouteille_id = %s", [bouteille_id])
+    commentaires = cur.fetchall()
+
+    # Calculer la moyenne des notes
+    cur.execute("SELECT AVG(note) as moyenne_note FROM Commentaire WHERE bouteille_id = %s", [bouteille_id])
+    moyenne_note = cur.fetchone()['moyenne_note']
+
+    # Formulaire pour ajouter un commentaire et une note
+    commentaire_form = AddCommentaireForm()
+
+    if commentaire_form.validate_on_submit():
+        # Ajouter le commentaire et la note dans la base de données
+        cur.execute("""
+            INSERT INTO Commentaire (contenu, note, pseudo, bouteille_id)
+            VALUES (%s, %s, %s, %s)
+        """, (commentaire_form.contenu.data, commentaire_form.note.data, current_user['pseudo'], bouteille_id))
+        mysql.connection.commit()
+
+        flash('Commentaire et note ajoutés avec succès !', 'success')
+        return redirect(url_for('afficher_bouteille', bouteille_id=bouteille_id))
+
+    cur.close()
+
+    return render_template('afficher_bouteille.html', bouteille=bouteille, commentaires=commentaires,
+                           commentaire_form=commentaire_form, moyenne_note=moyenne_note)
 
 @app.route('/test_session')
 def test_session():

@@ -7,7 +7,7 @@
 <body>
     <h1>Ajouter une bouteille dans l'étagère</h1>
 
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">  <!-- Ajout de enctype pour gérer les fichiers -->
         {{ bouteille_form.hidden_tag() }}  <!-- Protection CSRF -->
 
         <div>
@@ -38,6 +38,12 @@
         <div>
             <label for="prix">Prix :</label>
             {{ bouteille_form.prix }}
+        </div>
+
+        <!-- Champ pour télécharger l'image de l'étiquette -->
+        <div>
+            <label for="photoEtiquette">Photo de l'étiquette :</label>
+            {{ bouteille_form.photoEtiquette }}
         </div>
 
         <div>
