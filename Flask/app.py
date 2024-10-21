@@ -53,32 +53,50 @@ def creer_cave():
     cave_form = AddCaveForm()
 
     if cave_form.validate_on_submit():
+        print("Le formulaire est bien validé")
 
         if current_user:  # Vérifie que l'utilisateur est bien connecté
-            # Exécution de la requête SQL
-            cur = mysql.connection.cursor()
-            cur.execute("INSERT INTO Cave (nom, nombreEtagere, utilisateur_id) VALUES (%s, %s, %s)",
+            print(f"ID utilisateur : {current_user['id']}")  # Debug: Vérifie l'ID utilisateur
+            print(f"Nom de la cave : {cave_form.nom.data}, Nombre d'étagères : {cave_form.nombre_etageres.data}")  # Debug: Vérifie les valeurs du formulaire
+
+            try:
+                # Exécution de la requête SQL
+                cur = mysql.connection.cursor()
+                cur.execute("INSERT INTO Cave (nom, nombreEtagere, utilisateur_id) VALUES (%s, %s, %s)",
                             (cave_form.nom.data, cave_form.nombre_etageres.data, current_user['id']))
-            mysql.connection.commit()
-            cur.close()
+                mysql.connection.commit()
+                cur.close()
+                print("Insertion dans la base réussie")
+                flash('Cave créée avec succès !', 'success')
+            except Exception as e:
+                print(f"Erreur lors de l'insertion : {e}")  # Capture l'erreur en cas d'échec
+                flash(f"Erreur lors de la création de la cave : {e}", 'danger')
 
         return redirect(url_for('lister_caves'))
+    else:
+        print("Le formulaire n'a pas été validé")
 
         return render_template('creer_cave.html', cave_form=cave_form)
 
 
 @app.route('/cave/<int:cave_id>/supprimer', methods=['POST'])
 def supprimer_cave(cave_id):
-    cur = mysql.connection.cursor()
+    try:
+        cur = mysql.connection.cursor()
 
-    cur.execute("DELETE FROM Etagere WHERE cave_id = %s", [cave_id])
+        # Supprimer les étagères associées à cette cave
+        cur.execute("DELETE FROM Etagere WHERE cave_id = %s", [cave_id])
 
-    cur.execute("DELETE FROM Cave WHERE id = %s", [cave_id])
-    mysql.connection.commit()
-    cur.close()
+        # Supprimer la cave elle-même
+        cur.execute("DELETE FROM Cave WHERE id = %s", [cave_id])
+        mysql.connection.commit()
+        cur.close()
 
+        flash('Cave supprimée avec succès', 'success')
+    except Exception as e:
+        flash(f'Erreur lors de la suppression de la cave : {e}', 'danger')
 
-return redirect(url_for('lister_caves'))
+    return redirect(url_for('lister_caves'))
 
 @app.route('/cave/<int:cave_id>/ajouter_etagere', methods=['GET', 'POST'])
 def ajouter_etagere(cave_id):
@@ -95,6 +113,7 @@ def ajouter_etagere(cave_id):
         mysql.connection.commit()
         cur.close()
 
+        flash('Étagère ajoutée avec succès !', 'success')
         return redirect(url_for('lister_etageres', cave_id=cave_id))
 
     # Transmettre 'cave_id' au template
@@ -107,6 +126,7 @@ def supprimer_etagere(etagere_id):
     mysql.connection.commit()
     cur.close()
 
+    flash('Étagère supprimée avec succès !', 'success')
     return redirect(request.referrer)
 
 @app.route('/etagere/<int:etagere_id>/ajouter_bouteille', methods=['GET', 'POST'])
@@ -133,6 +153,7 @@ def ajouter_bouteille(etagere_id):
         mysql.connection.commit()
         cur.close()
 
+        flash('Bouteille ajoutée à l\'étagère avec succès !', 'success')
         return redirect(url_for('lister_bouteilles', etagere_id=etagere_id))
 
     return render_template('ajouter_bouteille.html', bouteille_form=bouteille_form, etagere_id=etagere_id)
@@ -144,6 +165,7 @@ def supprimer_bouteille(bouteille_id):
     mysql.connection.commit()
     cur.close()
 
+    flash('Bouteille supprimée avec succès !', 'success')
     return redirect(request.referrer)
 
 @app.route('/lister_caves')
