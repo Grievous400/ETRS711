@@ -50,3 +50,5 @@ CREATE TABLE Commentaire (
     contenu TEXT,
     FOREIGN KEY (bouteille_id) REFERENCES Bouteille(id)
 );
+
+ALTER TABLE Commentaire ADD note INT CHECK (note >= 1 AND note <= 5);
